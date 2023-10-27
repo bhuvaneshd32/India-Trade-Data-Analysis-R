@@ -11,9 +11,13 @@ export$Type <- "Export"
 import$Type <- "Import"
 
 
-
 # View the combined dataset
 View(combined_data)
+
+# Combine the datasets
+combined_data <- bind_rows(export, import)
+
+# View the combined dataset
 head(combined_data)
 
 
@@ -125,5 +129,3 @@ if(p_value>0.05)
 }else{
   cat("We reject H0.Significanct difference Between Export and Import Value of Country in a particular year")
 }
-
-
