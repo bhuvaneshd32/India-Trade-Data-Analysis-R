@@ -10,10 +10,10 @@ export$HSCode <- as.character(export$HSCode)
 export$Type <- "Export"
 import$Type <- "Import"
 
-# Combine the datasets
-combined_data <- bind_rows(export, import)
+
 
 # View the combined dataset
+View(combined_data)
 head(combined_data)
 
 
@@ -26,6 +26,8 @@ export$value[is.na(export$value)]=0
 import$value[is.na(import$value)]=0
 #Grouping Export data in accordance to commodity and year
 
+# Combine the datasets
+combined_data <- bind_rows(export, import)
 
 grouped_commodity_export= export%>% group_by(Commodity,export$year) %>%summarise(total_value = sum(value), 
             .groups = 'drop')
@@ -87,5 +89,41 @@ Growth_rate1=((EV1/BV1)^(1.0/9.0))-1
 
 cat("Growth Rate of export between  ",country,"is",Growth_rate1)
 
+# Performing the one-way ANOVA manually:
+
+
+#H0:No significant difference Between Export and Import Value of Country in a particular year
+#Ha:Significanct difference Between Export and Import Value of Country in a particular year
+
+#1: Calculating the means by considering each type,country and year as a combination
+means <- aggregate(value ~ Type + country + year, data = combined_data, FUN = mean)
+#2: Calculate the total mean
+grand_mean <- mean(combined_data$value)
+#3: Calculating the between-group sum of squares (SSB) (X-x_mean)^2
+SSB <- sum((means$value - grand_mean)^2)
+#4: Calculating the within-group sum of squares (SSW) (Y-y_mean)^2
+SSW <- sum((combined_data$value - ave(combined_data$value, combined_data$Type, combined_data$country, combined_data$year))^2)
+#5: Calculating degrees of freedom
+df_B <- length(unique(combined_data$Type)) - 1
+df_W <- length(unique(combined_data$Type)) * (length(unique(combined_data$country)) - 1) * (length(unique(combined_data$year)) - 1)
+
+#6: Calculating mean squares (MS)
+MSB <- SSB / df_B
+MSW <- SSW / df_W
+
+#7: Calculating the F-statistic
+F_statistic <- MSB / MSW
+
+#Calculating the p-value
+p_value <- 1 - pf(F_statistic, df_B, df_W)
+cat("F-statistic:", F_statistic, "\n")
+cat("p-value:", p_value, "\n")
+
+if(p_value>0.05)
+{
+  cat("We fail to reject H0.No significant difference Between Export and Import Value of Country in a particular year")
+}else{
+  cat("We reject H0.Significanct difference Between Export and Import Value of Country in a particular year")
+}
 
 
