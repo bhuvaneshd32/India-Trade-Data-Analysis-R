@@ -22,7 +22,7 @@ library(MASS)
 fit = fitdistr(v,"exponential")
 lambda = unname(fit$estimate)
 paste("Ho : Data follows Exponential distribution with lambda = ",lambda)
-paste("Ho : Data does not follow Exponential distribution with lambda = ",lambda)
+paste("Ha : Data does not follow Exponential distribution with lambda = ",lambda)
 
 breaks = seq(0, 10, by = 0.01)
 data_g = cut(v, breaks = breaks)
