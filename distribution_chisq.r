@@ -38,3 +38,11 @@ for (i in 1:1000) {
 }
 
 p_value = 1 - pchisq(chisq, df = 1000)
+
+if(p_value < 0.05) {
+  print("Reject Ho")
+  print("Data does not follow Exponential distribution")
+} else {
+  print("Accept Ho")
+  print("Data follows Exponential distribution")
+}
